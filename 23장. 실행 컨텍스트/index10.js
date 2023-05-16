@@ -1,0 +1,1 @@
+console.hasOwnProperty('log'); // -> true
