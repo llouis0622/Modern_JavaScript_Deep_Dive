@@ -399,3 +399,301 @@
     // setB가 setA의 상위 집합인지 확인한다.
     console.log(setB.isSuperset(setA)); // false
     ```
+
+# 2. `Map`
+
+- 키와 값의 쌍으로 이루어진 컬렉션
+- 객체와 유사
+    - 키로 사용할 수 있는 값 : 객체를 포함한 모든 값
+    - 이터러블
+    - 요소 개수 확인 : `map.size`
+
+## 2. `Map` 객체의 생성
+
+- `Map` 생성자 함수로 생성
+    
+    ```jsx
+    const map = new Map();
+    console.log(map); // Map(0) {}
+    ```
+    
+- 이터러블을 인수로 전달받아 `Map` 객체 생성
+- 인수로 전달되는 이터러블 : 키와 값의 쌍으로 이루어진 요소로 구성
+    
+    ```jsx
+    const map1 = new Map([['key1', 'value1'], ['key2', 'value2']]);
+    console.log(map1); // Map(2) {"key1" => "value1", "key2" => "value2"}
+    
+    const map2 = new Map([1, 2]); // TypeError: Iterator value 1 is not an entry object
+    ```
+    
+- 중복된 키를 갖는 요소 존재 가능
+    
+    ```jsx
+    const map = new Map([['key1', 'value1'], ['key1', 'value2']]);
+    console.log(map); // Map(1) {"key1" => "value2"}
+    ```
+    
+
+## 2. 요소 개수 확인
+
+- `Map.prototype.size` 프로퍼티 사용
+    
+    ```jsx
+    const { size } = new Map([['key1', 'value1'], ['key2', 'value2']]);
+    console.log(size); // 2
+    ```
+    
+- `getter` 함수만 존재하는 접근자 프로퍼티
+- 숫자를 할당하여 `Map` 객체의 요소 개수 변경 불가능
+    
+    ```jsx
+    const map = new Map([['key1', 'value1'], ['key2', 'value2']]);
+    
+    console.log(Object.getOwnPropertyDescriptor(Map.prototype, 'size'));
+    // {set: undefined, enumerable: false, configurable: true, get: ƒ}
+    
+    map.size = 10; // 무시된다.
+    console.log(map.size); // 2
+    ```
+    
+
+## 3. 요소 추가
+
+- `Map.prototype.set` 메서드 사용
+    
+    ```jsx
+    const map = new Map();
+    console.log(map); // Map(0) {}
+    
+    map.set('key1', 'value1');
+    console.log(map); // Map(1) {"key1" => "value1"}
+    ```
+    
+- 새로운 요소가 추가된 `Map` 객체 반환 → 연속적으로 호출 가능
+    
+    ```jsx
+    const map = new Map();
+    
+    map
+      .set('key1', 'value1')
+      .set('key2', 'value2');
+    
+    console.log(map); // Map(2) {"key1" => "value1", "key2" => "value2"}
+    ```
+    
+- 중복된 키를 갖는 요소 추가 → 값이 덮어써짐
+    
+    ```jsx
+    const map = new Map();
+    
+    map
+      .set('key1', 'value1')
+      .set('key1', 'value2');
+    
+    console.log(map); // Map(1) {"key1" => "value2"}
+    ```
+    
+    ```jsx
+    const map = new Map();
+    
+    console.log(NaN === NaN); // false
+    console.log(0 === -0); // true
+    
+    // NaN과 NaN을 같다고 평가하여 중복 추가를 허용하지 않는다.
+    map.set(NaN, 'value1').set(NaN, 'value2');
+    console.log(map); // Map(1) { NaN => 'value2' }
+    
+    // +0과 -0을 같다고 평가하여 중복 추가를 허용하지 않는다.
+    map.set(0, 'value1').set(-0, 'value2');
+    console.log(map); // Map(2) { NaN => 'value2', 0 => 'value2' }
+    ```
+    
+- 키 타입에 제한 없음 → 모든 값을 키로 사용 가능
+    
+    ```jsx
+    const map = new Map();
+    
+    const lee = { name: 'Lee' };
+    const kim = { name: 'Kim' };
+    
+    // 객체도 키로 사용할 수 있다.
+    map
+      .set(lee, 'developer')
+      .set(kim, 'designer');
+    
+    console.log(map);
+    // Map(2) { {name: "Lee"} => "developer", {name: "Kim"} => "designer" }
+    ```
+    
+
+## 4. 요소 취득
+
+- `Map.prototype.get` 메서드 사용
+- 인수로 키를 전달 → `Map` 객체에서 인수로 전달한 키를 갖는 값 반환
+- 인수로 전달한 키를 갖는 요소 존재하지 않음 → `undefined` 반환
+    
+    ```jsx
+    const map = new Map();
+    
+    const lee = { name: 'Lee' };
+    const kim = { name: 'Kim' };
+    
+    map
+      .set(lee, 'developer')
+      .set(kim, 'designer');
+    
+    console.log(map.get(lee)); // developer
+    console.log(map.get('key')); // undefined
+    ```
+    
+
+## 5. 요소 존재 여부 확인
+
+- `Map.prototype.has` 메서드 사용
+- 특정 요소의 존재 여부를 나타내는 불리언 값 반환
+    
+    ```jsx
+    const lee = { name: 'Lee' };
+    const kim = { name: 'Kim' };
+    
+    const map = new Map([[lee, 'developer'], [kim, 'designer']]);
+    
+    console.log(map.has(lee)); // true
+    console.log(map.has('key')); // false
+    ```
+    
+
+## 6. 요소 삭제
+
+- `Map.prototype.delete` 메서드 사용
+- 삭제 성공 여부를 나타내는 불리언 값 반환
+    
+    ```jsx
+    const lee = { name: 'Lee' };
+    const kim = { name: 'Kim' };
+    
+    const map = new Map([[lee, 'developer'], [kim, 'designer']]);
+    
+    map.delete(kim);
+    console.log(map); // Map(1) { {name: "Lee"} => "developer" }
+    ```
+    
+- 존재하지 않는 키로 `Map` 객체 요소 삭제 → 에러 없이 무시
+    
+    ```jsx
+    const map = new Map([['key1', 'value1']]);
+    
+    // 존재하지 않는 키 'key2'로 요소를 삭제하려 하면 에러없이 무시된다.
+    map.delete('key2');
+    console.log(map); // Map(1) {"key1" => "value1"}
+    ```
+    
+- 연속적으로 호출 불가
+    
+    ```jsx
+    const lee = { name: 'Lee' };
+    const kim = { name: 'Kim' };
+    
+    const map = new Map([[lee, 'developer'], [kim, 'designer']]);
+    
+    map.delete(lee).delete(kim); // TypeError: map.delete(...).delete is not a function
+    ```
+    
+
+## 7. 요소 일괄 삭제
+
+- `Map.prototype.clear` 메서드 사용
+- 언제나 `undefined` 반환
+    
+    ```jsx
+    const lee = { name: 'Lee' };
+    const kim = { name: 'Kim' };
+    
+    const map = new Map([[lee, 'developer'], [kim, 'designer']]);
+    
+    map.clear();
+    console.log(map); // Map(0) {}
+    ```
+    
+
+## 8. 요소 순회
+
+- `Map.prototype.forEach` 메서드 사용
+- 콜백 함수와 `forEach` 메서드의 콜백 함수 내에서 `this` 로 사용될 객체를 인수로 전달
+    - 첫 번째 인수 : 현재 순회 중인 요소값
+    - 두 번째 인수 : 현재 순회 중인 요소키
+    - 세 번째 인수 : 현재 순회 중인 `Map` 객체 자체
+    
+    ```jsx
+    const lee = { name: 'Lee' };
+    const kim = { name: 'Kim' };
+    
+    const map = new Map([[lee, 'developer'], [kim, 'designer']]);
+    
+    map.forEach((v, k, map) => console.log(v, k, map));
+    /*
+    developer {name: "Lee"} Map(2) {
+      {name: "Lee"} => "developer",
+      {name: "Kim"} => "designer"
+    }
+    designer {name: "Kim"} Map(2) {
+      {name: "Lee"} => "developer",
+      {name: "Kim"} => "designer"
+    }
+    */
+    ```
+    
+- 이터러블 → `for ... of` 문으로 순회 가능, 스프레드 문법과 배열 디스트럭처링 할당 대상 가능
+    
+    ```jsx
+    const lee = { name: 'Lee' };
+    const kim = { name: 'Kim' };
+    
+    const map = new Map([[lee, 'developer'], [kim, 'designer']]);
+    
+    // Map 객체는 Map.prototype의 Symbol.iterator 메서드를 상속받는 이터러블이다.
+    console.log(Symbol.iterator in map); // true
+    
+    // 이터러블인 Map 객체는 for...of 문으로 순회할 수 있다.
+    for (const entry of map) {
+      console.log(entry); // [{name: "Lee"}, "developer"]  [{name: "Kim"}, "designer"]
+    }
+    
+    // 이터러블인 Map 객체는 스프레드 문법의 대상이 될 수 있다.
+    console.log([...map]);
+    // [[{name: "Lee"}, "developer"], [{name: "Kim"}, "designer"]]
+    
+    // 이터러블인 Map 객체는 배열 디스트럭처링 할당의 대상이 될 수 있다.
+    const [a, b] = map;
+    console.log(a, b); // [{name: "Lee"}, "developer"]  [{name: "Kim"}, "designer"]
+    ```
+    
+- 이터러블이면서 동시에 이터레이터인 객체를 반환하는 메서드 제공
+    - `Map.prototype.keys` : `Map` 객체에서 요소키를 값으로 갖는 이터러블이면서 동시에 이터레이터인 객체 반환
+    - `Map.prototype.values` : `Map` 객체에서 요소값을 값으로 갖는 이터러블이면서 동시에 이터레이터인 객체 반환
+    - `Map.prototype.entries` : `Map` 객체에서 요소키와 요소값을 값으로 갖는 이터러블이면서 동시에 이터레이터인 객체 반환
+    
+    ```jsx
+    const lee = { name: 'Lee' };
+    const kim = { name: 'Kim' };
+    
+    const map = new Map([[lee, 'developer'], [kim, 'designer']]);
+    
+    // Map.prototype.keys는 Map 객체에서 요소키를 값으로 갖는 이터레이터를 반환한다.
+    for (const key of map.keys()) {
+      console.log(key); // {name: "Lee"} {name: "Kim"}
+    }
+    
+    // Map.prototype.values는 Map 객체에서 요소값을 값으로 갖는 이터레이터를 반환한다.
+    for (const value of map.values()) {
+      console.log(value); // developer designer
+    }
+    
+    // Map.prototype.entries는 Map 객체에서 요소키와 요소값을 값으로 갖는 이터레이터를 반환한다.
+    for (const entry of map.entries()) {
+      console.log(entry); // [{name: "Lee"}, "developer"]  [{name: "Kim"}, "designer"]
+    }
+    ```
+    
+- `Map` 객체를 순회하는 순서 : 요소가 추가된 순서
