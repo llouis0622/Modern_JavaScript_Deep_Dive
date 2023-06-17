@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul id="fruits">
+      <li class="apple">Apple</li>
+      <li class="banana">Banana</li>
+      <li class="orange">Orange</li>
+    </ul>
+  </body>
+  <script>
+    const $apple = document.querySelector('.apple');
+
+    // $apple 노드는 '#fruits > li.apple'로 취득할 수 있다.
+    console.log($apple.matches('#fruits > li.apple'));  // true
+
+    // $apple 노드는 '#fruits > li.banana'로 취득할 수 없다.
+    console.log($apple.matches('#fruits > li.banana')); // false
+  </script>
+</html>

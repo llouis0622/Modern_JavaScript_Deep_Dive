@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul>
+      <li id="apple">Apple</li>
+      <li id="banana">Banana</li>
+      <li id="orange">Orange</li>
+    </ul>
+    <script>
+      // id 값이 'grape'인 요소 노드를 탐색하여 반환한다. null이 반환된다.
+      const $elem = document.getElementById('grape');
+
+      // 취득한 요소 노드의 style.color 프로퍼티 값을 변경한다.
+      $elem.style.color = 'red';
+      // -> TypeError: Cannot read property 'style' of null
+    </script>
+  </body>
+</html>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul id="fruits">
+      <li>Apple</li>
+      <li>Banana</li>
+    </ul>
+  </body>
+  <script>
+    const $fruits = document.getElementById('fruits');
+
+    // childNodes 프로퍼티는 NodeList 객체(live)를 반환한다.
+    const { childNodes } = $fruits;
+
+    // 스프레드 문법을 사용하여 NodeList 객체를 배열로 변환한다.
+    [...childNodes].forEach(childNode => {
+      $fruits.removeChild(childNode);
+    });
+
+    // $fruits 요소의 모든 자식 노드가 모두 삭제되었다.
+    console.log(childNodes); // NodeList []
+  </script>
+</html>

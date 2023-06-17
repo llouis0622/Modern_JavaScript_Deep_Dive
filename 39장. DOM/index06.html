@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <div id="foo"></div>
+    <script>
+      // id 값과 동일한 이름의 전역 변수가 암묵적으로 선언되고 해당 노드 객체가 할당된다.
+      console.log(foo === document.getElementById('foo')); // true
+
+      // 암묵적 전역으로 생성된 전역 프로퍼티는 삭제되지만 전역 변수는 삭제되지 않는다.
+      delete foo;
+      console.log(foo); // <div id="foo"></div>
+    </script>
+  </body>
+</html>

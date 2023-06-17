@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<head>
+  <style>
+    .red { color: red; }
+    .blue { color: blue; }
+  </style>
+</head>
+<html>
+  <body>
+    <ul id="fruits">
+      <li class="red">Apple</li>
+      <li class="red">Banana</li>
+      <li class="red">Orange</li>
+    </ul>
+    <script>
+      // class 값이 'red'인 요소 노드를 모두 탐색하여 HTMLCollection 객체에 담아 반환한다.
+      const $elems = document.getElementsByClassName('red');
+      // 이 시점에 HTMLCollection 객체에는 3개의 요소 노드가 담겨 있다.
+      console.log($elems); // HTMLCollection(3) [li.red, li.red, li.red]
+
+      // HTMLCollection 객체의 모든 요소의 class 값을 'blue'로 변경한다.
+      for (let i = 0; i < $elems.length; i++) {
+        $elems[i].className = 'blue';
+      }
+
+      // HTMLCollection 객체의 요소가 3개에서 1개로 변경되었다.
+      console.log($elems); // HTMLCollection(1) [li.red]
+    </script>
+  </body>
+</html>

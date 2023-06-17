@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul id="fruits">
+      <li>Apple</li>
+      <li>Banana</li>
+      <li>Orange</li>
+    </ul>
+    <ul>
+      <li>HTML</li>
+    </ul>
+    <script>
+      // DOM 전체에서 태그 이름이 li인 요소 노드를 모두 탐색하여 반환한다.
+      const $lisFromDocument = document.getElementsByTagName('li');
+      console.log($lisFromDocument); // HTMLCollection(4) [li, li, li, li]
+
+      // #fruits 요소의 자손 노드 중에서 태그 이름이 li인 요소 노드를 모두
+      // 탐색하여 반환한다.
+      const $fruits = document.getElementById('fruits');
+      const $lisFromFruits = $fruits.getElementsByTagName('li');
+      console.log($lisFromFruits); // HTMLCollection(3) [li, li, li]
+    </script>
+  </body>
+</html>

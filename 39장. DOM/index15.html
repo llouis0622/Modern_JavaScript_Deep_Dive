@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul>
+      <li class="apple">Apple</li>
+      <li class="banana">Banana</li>
+      <li class="orange">Orange</li>
+    </ul>
+    <script>
+      // ul 요소의 자식 요소인 li 요소를 모두 탐색하여 반환한다.
+      const $elems = document.querySelectorAll('ul > li');
+      // 취득한 요소 노드들은 NodeList 객체에 담겨 반환된다.
+      console.log($elems); // NodeList(3) [li.apple, li.banana, li.orange]
+
+      // 취득한 모든 요소 노드의 style.color 프로퍼티 값을 변경한다.
+      // NodeList는 forEach 메서드를 제공한다.
+      $elems.forEach(elem => { elem.style.color = 'red'; });
+    </script>
+  </body>
+</html>
