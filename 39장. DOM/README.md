@@ -639,648 +639,6 @@
       </script>
     </html>
     ```
-
-# 39장. DOM
-
-# 1. 노드
-
-## 1. HTML 요소와 노드 객체
-
-- HTML 요소 : HTML 문서를 구성하는 개별적인 요소
-- 렌더링 엔진에 의해 파싱되어 DOM을 구성하는 요소 노드 객체로 변환
-    - 어트리뷰트 → 어트리뷰트 노드
-    - 텍스트 콘텐츠 → 텍스트 노드
-- HTML 요소들의 집합으로 이루어짐, HTML 요소 중첩 관계를 가짐
-- HTML 요소 간의 부자 관계를 반영 → HTML 문서의 구성 요소인 HTML 요소를 객체화한 모든 노드 객체들을 트리 자료구조로 구성
-
-### 1. 트리 자료구조(Tree Data Structure)
-
-- 노드들의 계층 구조로 이루어짐
-- 부모 노드와 자식 노드로 구성
-- 노드 간의 계층적 구조를 표현하는 비선형 자료구조
-- DOM : 노드 객체들로 구성된 트리 자료구조, DOM 트리
-
-## 2. 노드 객체의 타입
-
-```html
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="style.css">
-  </head>
-  <body>
-    <ul>
-      <li id="apple">Apple</li>
-      <li id="banana">Banana</li>
-      <li id="orange">Orange</li>
-    </ul>
-    <script src="app.js"></script>
-  </body>
-</html>
-```
-
-### 1. 문서 노드(Document Node)
-
-- DOM 트리의 최상위에 존재하는 루트 노드로서 `document` 객체를 가리킴
-- 브라우저가 렌더링한 HTML 문서 전체를 가리키는 객체로서 전역 객체 `window` 의 `document` 프로퍼티에 바인딩
-- HTML 문서당 `document` 객체는 유일
-- DOM 트리의 노드들에 접근하기 위한 진입점 역할 담당
-
-### 2. 요소 노드(Element Node)
-
-- HTML 문서당 `document` 객체는 유일
-- DOM 트리의 노드들에 접근하기 위한 진입점 역할 담당
-
-### 2. 요소 노드(Element Node)
-
-- HTML 요소를 가리키는 객체
-- HTML 요소 간의 중첩에 의해 부자 관계를 가지며 부자 관계를 통해 정보를 구조화함
-- 문서의 구조 표현
-
-### 3. 어트리뷰트 노드(Attribute Node)
-
-- HTML 요소의 어트리뷰트를 가리키는 객체
-- 어트리뷰트가 지정된 HTML 요소의 요소 노드와 연결
-- 어트리뷰트 노드에 접근하여 어트리뷰트를 참조하거나 변경하려면 먼저 요소 노드에 접근
-
-### 4. 텍스트 노드(Text Node)
-
-- HTML 요소의 텍스트를 가리키는 객체
-- 문서 정보 표현
-- DOM 트리의 최종단
-
-## 3. 노드 객체의 상속 구조
-
-- 브라우저 환경에서 추가적으로 제공하는 호스트 객체
-- 모든 노드 객체는 `Object` , `EventTarget` , `Node` 인터페이스 상속받음
-- 문서 노드는 `Document` , `HTMLDocument` 인터페이스 상속받음
-- 어트리뷰트 노드는 `Attr` , 텍스트 노드는 `CharacterData` 인터페이스 상속받음
-- 요소 노드는 `Element` 인터페이스 상속받음
-- 요소 노드는 추가적으로 `HTMLElement` 와 태그의 종류별로 세분화된 `HTMLHtmlElement` , `HTMLHeadElement` , `HTMLBodyElement` , `HTMLULinstElement` 등의 인터페이스 상속받음
-    
-    ```html
-    <!DOCTYPE html>
-    <html>
-    <body>
-      <input type="text">
-      <script>
-        // input 요소 노드 객체를 선택
-        const $input = document.querySelector('input');
-    
-        // input 요소 노드 객체의 프로토타입 체인
-        console.log(
-          Object.getPrototypeOf($input) === HTMLInputElement.prototype,
-          Object.getPrototypeOf(HTMLInputElement.prototype) === HTMLElement.prototype,
-          Object.getPrototypeOf(HTMLElement.prototype) === Element.prototype,
-          Object.getPrototypeOf(Element.prototype) === Node.prototype,
-          Object.getPrototypeOf(Node.prototype) === EventTarget.prototype,
-          Object.getPrototypeOf(EventTarget.prototype) === Object.prototype
-        ); // 모두 true
-      </script>
-    </body>
-    </html>
-    ```
-    
-- 노드 객체는 공통된 기능일수록 프로토타입 체인의 상위에, 개별적인 고유 기능일수록 프로토타입 체인의 하위에 프로토타입 체인을 구축하여 노드 객체에 필요한 기능 → 프로퍼티와 메서드를 제공하는 상속 구조를 가짐
-- DOM은 HTML 문서의 계층적 구조와 정보를 표현하는 것은 물론 노드 객체의 종류, 노드 타입에 따라 필요한 기능을 프로퍼티와 메서드의 집합인 DOM API로 제공
-- DOM API를 통해 HTML의 구조나 내용 또는 스타일 등을 동적으로 조작 가능
-
-# 2. 요소 노드 취득
-
-- HTML 요소를 조작하는 시점
-- DOM은 요소 노드를 취득할 수 있는 다양한 메서드 제공
-
-## 1. id를 이용한 요소 노드 취득
-
-- `Document.prototype.getElementById` 메서드 : 인술로 전달한 id 어트리뷰트 값을 갖는 하나의 요소 노드를 탐색하여 반환
-- 문서 노드인 `document` 를 통해 호출
-    
-    ```html
-    <!DOCTYPE html>
-    <html>
-      <body>
-        <ul>
-          <li id="apple">Apple</li>
-          <li id="banana">Banana</li>
-          <li id="orange">Orange</li>
-        </ul>
-        <script>
-          // id 값이 'banana'인 요소 노드를 탐색하여 반환한다.
-          // 두 번째 li 요소가 파싱되어 생성된 요소 노드가 반환된다.
-          const $elem = document.getElementById('banana');
-    
-          // 취득한 요소 노드의 style.color 프로퍼티 값을 변경한다.
-          $elem.style.color = 'red';
-        </script>
-      </body>
-    </html>
-    ```
-    
-- id 값 : HTML 문서 내에서 유일한 값, `class` 어트리뷰트와는 달리 공백 문자로 구분하여 여러 개의 값을 가질 수 없음
-- HTML 문서 내에는 중복된 id 값을 갖는 요소가 여러 개 존재할 가능성 있음 → 인수로 전달된 id 값을 갖는 첫 번째 요소 노드만 반환
-- 언제나 단 하나의 요소 노드 반환
-    
-    ```html
-    <!DOCTYPE html>
-    <html>
-      <body>
-        <ul>
-          <li id="banana">Apple</li>
-          <li id="banana">Banana</li>
-          <li id="banana">Orange</li>
-        </ul>
-        <script>
-          // getElementById 메서드는 언제나 단 하나의 요소 노드를 반환한다.
-          // 첫 번째 li 요소가 파싱되어 생성된 요소 노드가 반환된다.
-          const $elem = document.getElementById('banana');
-    
-          // 취득한 요소 노드의 style.color 프로퍼티 값을 변경한다.
-          $elem.style.color = 'red';
-        </script>
-      </body>
-    </html>
-    ```
-    
-- 인수로 전달된 id 값을 갖는 HTML 요소 존재하지 않을 경우 → `null` 반환
-    
-    ```html
-    <!DOCTYPE html>
-    <html>
-      <body>
-        <ul>
-          <li id="apple">Apple</li>
-          <li id="banana">Banana</li>
-          <li id="orange">Orange</li>
-        </ul>
-        <script>
-          // id 값이 'grape'인 요소 노드를 탐색하여 반환한다. null이 반환된다.
-          const $elem = document.getElementById('grape');
-    
-          // 취득한 요소 노드의 style.color 프로퍼티 값을 변경한다.
-          $elem.style.color = 'red';
-          // -> TypeError: Cannot read property 'style' of null
-        </script>
-      </body>
-    </html>
-    ```
-    
-- HTML 요소에 id 어트리뷰트 부여 → id 값과 동일한 이름의 전역 변수가 암묵적으로 선언되고 해당 노드 객체가 할당되는 부수 효과 존재
-    
-    ```html
-    <!DOCTYPE html>
-    <html>
-      <body>
-        <div id="foo"></div>
-        <script>
-          // id 값과 동일한 이름의 전역 변수가 암묵적으로 선언되고 해당 노드 객체가 할당된다.
-          console.log(foo === document.getElementById('foo')); // true
-    
-          // 암묵적 전역으로 생성된 전역 프로퍼티는 삭제되지만 전역 변수는 삭제되지 않는다.
-          delete foo;
-          console.log(foo); // <div id="foo"></div>
-        </script>
-      </body>
-    </html>
-    ```
-    
-- id 값과 동일한 이름의 전역 변수 이미 선언 → 전역 변수에 노드 객체가 재할당되지 않음
-    
-    ```html
-    <!DOCTYPE html>
-    <html>
-      <body>
-        <div id="foo"></div>
-        <script>
-          let foo = 1;
-    
-          // id 값과 동일한 이름의 전역 변수가 이미 선언되어 있으면 노드 객체가 재할당되지 않는다.
-          console.log(foo); // 1
-        </script>
-      </body>
-    </html>
-    ```
-    
-
-## 2. 태그 이름을 이용한 요소 노드 취득
-
-- `Document.prototype/Element.prototype.getElementsByTagName` 메서드 : 인수로 전달한 태그 이름을 갖는 모든 요소 노드들을 탐색하여 반환
-- 여러 개의 요소 노드 객체를 갖는 DOM 컬렉션 객체인 `HTMLCollection` 객체 반환
-    
-    ```html
-    <!DOCTYPE html>
-    <html>
-      <body>
-        <ul>
-          <li id="apple">Apple</li>
-          <li id="banana">Banana</li>
-          <li id="orange">Orange</li>
-        </ul>
-        <script>
-          // 태그 이름이 li인 요소 노드를 모두 탐색하여 반환한다.
-          // 탐색된 요소 노드들은 HTMLCollection 객체에 담겨 반환된다.
-          // HTMLCollection 객체는 유사 배열 객체이면서 이터러블이다.
-          const $elems = document.getElementsByTagName('li');
-    
-          // 취득한 모든 요소 노드의 style.color 프로퍼티 값을 변경한다.
-          // HTMLCollection 객체를 배열로 변환하여 순회하며 color 프로퍼티 값을 변경한다.
-          [...$elems].forEach(elem => { elem.style.color = 'red'; });
-        </script>
-      </body>
-    </html>
-    ```
-    
-- 여러 개의 값 반환 → 배열이나 객체와 같은 자료구조에 담아 반환
-- 유사 배열 객체이면서 이터러블
-- HTML 문서의 모든 요소 노드 취득 → `getElementsByTagName` 메서드 인수로 `*` 전달
-    
-    ```jsx
-    // 모든 요소 노드를 탐색하여 반환한다.
-    const $all = document.getElementsByTagName('*');
-    // -> HTMLCollection(8) [html, head, body, ul, li#apple, li#banana, li#orange, script, apple: li#apple, banana: li#banana, orange: li#orange]
-    ```
-    
-- `Document.prototype.getElementsByTagName`
-    - DOM의 루트 노드인 문서 노드, `document` 를 통해 호출
-    - DOM 전체에서 요소 노드를 탐색하여 반환
-- `Element.prototype.getElementsByTagName` 메서드
-    - 특정 요소 노드를 통해 호출
-    - 특정 요소 노드의 자손 노드 중에서 요소 노드를 탐색하여 반환
-    
-    ```html
-    <!DOCTYPE html>
-    <html>
-      <body>
-        <ul id="fruits">
-          <li>Apple</li>
-          <li>Banana</li>
-          <li>Orange</li>
-        </ul>
-        <ul>
-          <li>HTML</li>
-        </ul>
-        <script>
-          // DOM 전체에서 태그 이름이 li인 요소 노드를 모두 탐색하여 반환한다.
-          const $lisFromDocument = document.getElementsByTagName('li');
-          console.log($lisFromDocument); // HTMLCollection(4) [li, li, li, li]
-    
-          // #fruits 요소의 자손 노드 중에서 태그 이름이 li인 요소 노드를 모두
-          // 탐색하여 반환한다.
-          const $fruits = document.getElementById('fruits');
-          const $lisFromFruits = $fruits.getElementsByTagName('li');
-          console.log($lisFromFruits); // HTMLCollection(3) [li, li, li]
-        </script>
-      </body>
-    </html>
-    ```
-    
-- 인수로 전달된 태그 이름을 갖는 요소 존재하지 않을 경우 → 빈 `HTMLCollection` 객체 반환
-
-## 3. class를 이용한 요소 노드 취득
-
-- `Document.prototype/Element.prototype.getElementsByClassName` 메서드 : 인수로 전달한 class 어트리뷰트 값을 갖는 모든 요소 노드들을 탐색하여 반환
-- 인수로 전달할 class 값은 공백으로 구분하여 여러 개의 class 지정
-- 여러 개의 요소 노드 객체를 갖는 DOM 컬렉션 객체인 `HTMLCollection` 객체 반환
-    
-    ```html
-    <!DOCTYPE html>
-    <html>
-      <body>
-        <ul>
-          <li class="fruit apple">Apple</li>
-          <li class="fruit banana">Banana</li>
-          <li class="fruit orange">Orange</li>
-        </ul>
-        <script>
-          // class 값이 'fruit'인 요소 노드를 모두 탐색하여 HTMLCollection 객체에 담아 반환한다.
-          const $elems = document.getElementsByClassName('fruit');
-    
-          // 취득한 모든 요소의 CSS color 프로퍼티 값을 변경한다.
-          [...$elems].forEach(elem => { elem.style.color = 'red'; });
-    
-          // class 값이 'fruit apple'인 요소 노드를 모두 탐색하여 HTMLCollection 객체에 담아 반환한다.
-          const $apples = document.getElementsByClassName('fruit apple');
-    
-          // 취득한 모든 요소 노드의 style.color 프로퍼티 값을 변경한다.
-          [...$apples].forEach(elem => { elem.style.color = 'blue'; });
-        </script>
-      </body>
-    </html>
-    ```
-    
-- `Document.prototype.getElementsByClassName` 메서드
-    - DOM의 루트 노드인 문서 노드, `document` 를 통해 호출
-    - DOM 전체에서 요소 노드를 탐색하여 반환
-- `Element.prototype.getElementsByClassName` 메서드
-    - 특정 요소 노드를 통해 호출
-    - 특정 요소 노드의 자손 노드 중에서 요소 노드를 탐색하여 반환
-    
-    ```html
-    <!DOCTYPE html>
-    <html>
-      <body>
-        <ul id="fruits">
-          <li class="apple">Apple</li>
-          <li class="banana">Banana</li>
-          <li class="orange">Orange</li>
-        </ul>
-        <div class="banana">Banana</div>
-        <script>
-          // DOM 전체에서 class 값이 'banana'인 요소 노드를 모두 탐색하여 반환한다.
-          const $bananasFromDocument = document.getElementsByClassName('banana');
-          console.log($bananasFromDocument); // HTMLCollection(2) [li.banana, div.banana]
-    
-          // #fruits 요소의 자손 노드 중에서 class 값이 'banana'인 요소 노드를 모두 탐색하여 반환한다.
-          const $fruits = document.getElementById('fruits');
-          const $bananasFromFruits = $fruits.getElementsByClassName('banana');
-    
-          console.log($bananasFromFruits); // HTMLCollection [li.banana]
-        </script>
-      </body>
-    </html>
-    ```
-    
-- 인수로 전달된 class 값을 갖는 요소가 존재하지 않는 경우 → 빈 `HTMLCollection` 객체 반환
-
-## 4. CSS 선택자를 이용한 요소 노드 취득
-
-- 스타일을 적용하고자 하는 HTML 요소를 특정할 때 사용하는 문법
-    
-    ```jsx
-    /* 전체 선택자: 모든 요소를 선택 */
-    * { ... }
-    /* 태그 선택자: 모든 p 태그 요소를 모두 선택 */
-    p { ... }
-    /* id 선택자: id 값이 'foo'인 요소를 모두 선택 */
-    #foo { ... }
-    /* class 선택자: class 값이 'foo'인 요소를 모두 선택 */
-    .foo { ... }
-    /* 어트리뷰트 선택자: input 요소 중에 type 어트리뷰트 값이 'text'인 요소를 모두 선택 */
-    input[type=text] { ... }
-    /* 후손 선택자: div 요소의 후손 요소 중 p 요소를 모두 선택 */
-    div p { ... }
-    /* 자식 선택자: div 요소의 자식 요소 중 p 요소를 모두 선택 */
-    div > p { ... }
-    /* 인접 형제 선택자: p 요소의 형제 요소 중에 p 요소 바로 뒤에 위치하는 ul 요소를 선택 */
-    p + ul { ... }
-    /* 일반 형제 선택자: p 요소의 형제 요소 중에 p 요소 뒤에 위치하는 ul 요소를 모두 선택 */
-    p ~ ul { ... }
-    /* 가상 클래스 선택자: hover 상태인 a 요소를 모두 선택 */
-    a:hover { ... }
-    /* 가상 요소 선택자: p 요소의 콘텐츠의 앞에 위치하는 공간을 선택
-       일반적으로 content 프로퍼티와 함께 사용된다. */
-    p::before { ... }
-    ```
-    
-- `Document.prototype/Element.prototype.querySelector` 메서드 : 인수로 전달한 CSS 선택자를 만족시키는 하나의 요소 노드를 탐색하여 반환
-    - 인수로 전달한 CSS 선택자를 만족시키는 요소 노드가 여러 개인 경우 : 첫 번째 요소 노드만 반환
-    - 인수로 전달한 CSS 선택자를 만족시키는 요소 노드가 존재하지 않는 경우 : `null` 반환
-    - 인수로 전달한 CSS 선택자가 문법에 맞지 않는 경우 : `DOMException` 에러 발생
-    
-    ```html
-    <!DOCTYPE html>
-    <html>
-      <body>
-        <ul>
-          <li class="apple">Apple</li>
-          <li class="banana">Banana</li>
-          <li class="orange">Orange</li>
-        </ul>
-        <script>
-          // class 어트리뷰트 값이 'banana'인 첫 번째 요소 노드를 탐색하여 반환한다.
-          const $elem = document.querySelector('.banana');
-    
-          // 취득한 요소 노드의 style.color 프로퍼티 값을 변경한다.
-          $elem.style.color = 'red';
-        </script>
-      </body>
-    </html>
-    ```
-    
-- `Document.prototype/Element.prototype.querySelectorAll` 메서드 : 인수로 전달한 CSS 선택자를 만족시키는 모든 요소 노드를 탐색하여 반환
-- 여러 개의 요소 노드 객체를 갖는 DOM 컬렉션 객체인 `NodeList` 객체 반환
-- 유사 배열 객체이면서 이터러블
-    - 인수로 전달한 CSS 선택자를 만족시키는 요소가 존재하지 않을 경우 : 빈 `NodeList` 객체 반환
-    - 인수로 전달한 CSS 선택자가 문법에 맞지 않는 경우 : `DOMException` 에러 발생
-    
-    ```html
-    <!DOCTYPE html>
-    <html>
-      <body>
-        <ul>
-          <li class="apple">Apple</li>
-          <li class="banana">Banana</li>
-          <li class="orange">Orange</li>
-        </ul>
-        <script>
-          // ul 요소의 자식 요소인 li 요소를 모두 탐색하여 반환한다.
-          const $elems = document.querySelectorAll('ul > li');
-          // 취득한 요소 노드들은 NodeList 객체에 담겨 반환된다.
-          console.log($elems); // NodeList(3) [li.apple, li.banana, li.orange]
-    
-          // 취득한 모든 요소 노드의 style.color 프로퍼티 값을 변경한다.
-          // NodeList는 forEach 메서드를 제공한다.
-          $elems.forEach(elem => { elem.style.color = 'red'; });
-        </script>
-      </body>
-    </html>
-    ```
-    
-- HTML 문서의 모든 요소 취득 → `querySelectorAll` 메서드의 인수로 전체 선택자 `*` 전달
-    
-    ```jsx
-    // 모든 요소 노드를 탐색하여 반환한다.
-    const $all = document.querySelectorAll('*');
-    // -> NodeList(8) [html, head, body, ul, li#apple, li#banana, li#orange, script]
-    ```
-    
-- `Document.prototype` 에 정의된 메서드
-    - DOM의 루트 노드인 문서 노드, `document` 를 통해 호출
-    - DOM 전체에서 요소 노드를 탐색하여 반환
-- `Element.prototype` 에 정의된 메서드
-    - 특정 요소 노드를 통해 호출
-    - 특정 요소 노드의 자손 노드 중에서 요소 노드를 탐색하여 반환
-- CSS 선택자 문법을 사용하여 좀 더 구체적인 조건으로 요소 노드 취득 가능
-- 일관된 방식으로 요소 노드 취득 가능
-- id 어트리뷰트가 있는 요소 노드를 취득하는 경우 → `getElementById` 메서드 사용
-
-## 5. 특정 요소 노드를 취득할 수 있는지 확인
-
-- `Element.protype.matches` 메서드 : 인수로 전달한 CSS 선택자를 통해 특정 요소 노드를 취득할 수 있는지 확인
-    
-    ```html
-    <!DOCTYPE html>
-    <html>
-      <body>
-        <ul id="fruits">
-          <li class="apple">Apple</li>
-          <li class="banana">Banana</li>
-          <li class="orange">Orange</li>
-        </ul>
-      </body>
-      <script>
-        const $apple = document.querySelector('.apple');
-    
-        // $apple 노드는 '#fruits > li.apple'로 취득할 수 있다.
-        console.log($apple.matches('#fruits > li.apple'));  // true
-    
-        // $apple 노드는 '#fruits > li.banana'로 취득할 수 없다.
-        console.log($apple.matches('#fruits > li.banana')); // false
-      </script>
-    </html>
-    ```
-    
-
-## 6. `HTMLCollection` 과 `NodeList`
-
-- DOM API가 여러 개의 결과값을 반환하기 위한 DOM 컬렉션 객체
-- 유사 배열 객체이면서 이터러블
-- `for ... of` 문으로 순회 가능, 스프레드 문법을 사용하여 간단히 배열로 변환 가능
-- 노드 객체의 상태 변화를 실시간으로 반영하는 살아 있는 객체
-
-### 1. `HTMLCollection`
-
-- 노드 객체의 상태 변화를 실시간으로 반영하는 살아 있는 DOM 컬렉션 객체
-- 살아 있는 객체
-    
-    ```html
-    <!DOCTYPE html>
-    <head>
-      <style>
-        .red { color: red; }
-        .blue { color: blue; }
-      </style>
-    </head>
-    <html>
-      <body>
-        <ul id="fruits">
-          <li class="red">Apple</li>
-          <li class="red">Banana</li>
-          <li class="red">Orange</li>
-        </ul>
-        <script>
-          // class 값이 'red'인 요소 노드를 모두 탐색하여 HTMLCollection 객체에 담아 반환한다.
-          const $elems = document.getElementsByClassName('red');
-          // 이 시점에 HTMLCollection 객체에는 3개의 요소 노드가 담겨 있다.
-          console.log($elems); // HTMLCollection(3) [li.red, li.red, li.red]
-    
-          // HTMLCollection 객체의 모든 요소의 class 값을 'blue'로 변경한다.
-          for (let i = 0; i < $elems.length; i++) {
-            $elems[i].className = 'blue';
-          }
-    
-          // HTMLCollection 객체의 요소가 3개에서 1개로 변경되었다.
-          console.log($elems); // HTMLCollection(1) [li.red]
-        </script>
-      </body>
-    </html>
-    ```
-    
-- 실시간으로 노드 객체의 상태 변경을 반영하여 요소를 제거할 수 있기 떄문에 `HTMLCollection` 객체를 `for` 문으로 순회하면서 노드 객체의 상태를 변경해야 할 때 주의 필요
-- `for` 문을 역방향으로 순회하는 방법으로 회피 가능
-    
-    ```jsx
-    // for 문을 역방향으로 순회
-    for (let i = $elems.length - 1; i >= 0; i--) {
-      $elems[i].className = 'blue';
-    }
-    ```
-    
-- `while` 문을 사용하여 `HTMLCollection` 객체에 노드 객체가 남아 있지 않을 때까지 무한 반복하는 방법으로 회피 가능
-    
-    ```jsx
-    // while 문으로 HTMLCollection에 요소가 남아 있지 않을 때까지 무한 반복
-    let i = 0;
-    while ($elems.length > i) {
-      $elems[i].className = 'blue';
-    }
-    ```
-    
-- `HTMLCollection` 객체 미사용
-    
-    ```jsx
-    // 유사 배열 객체이면서 이터러블인 HTMLCollection을 배열로 변환하여 순회
-    [...$elems].forEach(elem => elem.className = 'blue');
-    ```
-    
-
-### 2. `NodeList`
-
-- `querySelectorAll` 메서드 : DOM 컬렉션 객체인 `NodeList` 객체 반환
-- `NodeList` 객체는 실시간으로 노드 객체의 상태 변경을 반영하지 않는 객체
-    
-    ```jsx
-    // querySelectorAll은 DOM 컬렉션 객체인 NodeList를 반환한다.
-    const $elems = document.querySelectorAll('.red');
-    
-    // NodeList 객체는 NodeList.prototype.forEach 메서드를 상속받아 사용할 수 있다.
-    $elems.forEach(elem => elem.className = 'blue');
-    ```
-    
-- `childNodes` 프로퍼티가 반환하는 `NodeList` 객체는 `HTMLCollection` 객체와 같이 실시간으로 노드 객체의 상태 변경을 반영하는 live 객체로 동작 → 주의 필요
-    
-    ```html
-    <!DOCTYPE html>
-    <html>
-      <body>
-        <ul id="fruits">
-          <li>Apple</li>
-          <li>Banana</li>
-        </ul>
-      </body>
-      <script>
-        const $fruits = document.getElementById('fruits');
-    
-        // childNodes 프로퍼티는 NodeList 객체(live)를 반환한다.
-        const { childNodes } = $fruits;
-        console.log(childNodes instanceof NodeList); // true
-    
-        // $fruits 요소의 자식 노드는 공백 텍스트 노드(39.3.1절 "공백 텍스트 노드" 참고)를 포함해 모두 5개다.
-        console.log(childNodes); // NodeList(5) [text, li, text, li, text]
-    
-        for (let i = 0; i < childNodes.length; i++) {
-          // removeChild 메서드는 $fruits 요소의 자식 노드를 DOM에서 삭제한다.
-          // (39.6.9절 "노드 삭제" 참고)
-          // removeChild 메서드가 호출될 때마다 NodeList 객체인 childNodes가 실시간으로 변경된다.
-          // 따라서 첫 번째, 세 번째 다섯 번째 요소만 삭제된다.
-          $fruits.removeChild(childNodes[i]);
-        }
-    
-        // 예상과 다르게 $fruits 요소의 모든 자식 노드가 삭제되지 않는다.
-        console.log(childNodes); // NodeList(2) [li, li]
-      </script>
-    </html>
-    ```
-    
-- 노드 객체의 상태 변경과 상관없이 안전하게 DOM 컬렉션 사용 → `HTMLCollection` 이나 `NodeList` 객체를 배열로 변환하여 사용하는 것을 권장
-- 모두 유사 배열 객체이면서 이터러블
-- 스프레드 문법이나 `Array.from` 메서드를 사용하여 간단히 배열로 변환 가능
-    
-    ```html
-    <!DOCTYPE html>
-    <html>
-      <body>
-        <ul id="fruits">
-          <li>Apple</li>
-          <li>Banana</li>
-        </ul>
-      </body>
-      <script>
-        const $fruits = document.getElementById('fruits');
-    
-        // childNodes 프로퍼티는 NodeList 객체(live)를 반환한다.
-        const { childNodes } = $fruits;
-    
-        // 스프레드 문법을 사용하여 NodeList 객체를 배열로 변환한다.
-        [...childNodes].forEach(childNode => {
-          $fruits.removeChild(childNode);
-        });
-    
-        // $fruits 요소의 모든 자식 노드가 모두 삭제되었다.
-        console.log(childNodes); // NodeList []
-      </script>
-    </html>
-    ```
     
 
 # 3. 노드 탐색
@@ -2323,3 +1681,596 @@
       </script>
     </html>
     ```
+    
+
+# 7. 어트리뷰트
+
+## 1. 어트리뷰트 노드와 `attributes` 프로퍼티
+
+- HTML 요소의 시작 태그에 `어트리뷰트 이름="어트리뷰트 값"` 형식으로 정의
+    
+    ```html
+    <input id="user" type="text" value="ungmo2">
+    ```
+    
+- `id, class, style` 어트리뷰트 : 모든 HTML 요소에 사용할 수 있음
+- `type, value, checked` 어트리뷰트 : `input` 요소에만 사용 가능
+- HTML 어트리뷰트당 하나의 어트리뷰트 노드 생성
+- 모든 어트리뷰트 노드의 참조 → 유사 배열 객체이자 이터러블인 `NamedNodeMap` 객체에 담겨서 요소 노드의 `attributes` 프로퍼티에 저장
+- 요소 노드의 모든 어트리뷰트 노드 → 요소 노드의 `Element.prototype.attributes` 프로퍼티로 취득 가능
+- `getter` 만 존재하는 읽기 전용 접근자 프로퍼티
+- 요소 노드의 모든 어트리뷰트 노드의 참조가 담긴 `NamedNodeMap` 객체 반환
+    
+    ```html
+    <!DOCTYPE html>
+    <html>
+    <body>
+      <input id="user" type="text" value="ungmo2">
+      <script>
+        // 요소 노드의 attribute 프로퍼티는 요소 노드의 모든 어트리뷰트 노드의 참조가 담긴 NamedNodeMap 객체를 반환한다.
+        const { attributes } = document.getElementById('user');
+        console.log(attributes);
+        // NamedNodeMap {0: id, 1: type, 2: value, id: id, type: type, value: value, length: 3}
+    
+        // 어트리뷰트 값 취득
+        console.log(attributes.id.value); // user
+        console.log(attributes.type.value); // text
+        console.log(attributes.value.value); // ungmo2
+      </script>
+    </body>
+    </html>
+    ```
+    
+
+## 2. HTML 어트리뷰트 조작
+
+- `Element.prototype.getAttribute/setAttribute` 메서드 : `attributes` 프로퍼티를 통하지 않고 요소 노드에서 메서드를 통해 직접 HTML 어트리뷰트 값을 취득하거나 변경 가능
+- HTML 어트리뷰트 값 참조 → `Element.prototype.getAttribute(attributeName)` 메서드 사용
+- HTML 어트리뷰트 값 변경 → `Element.prototype.setAttribute(attributeName, attributeValue)` 메서드 사용
+    
+    ```html
+    <!DOCTYPE html>
+    <html>
+    <body>
+      <input id="user" type="text" value="ungmo2">
+      <script>
+        const $input = document.getElementById('user');
+    
+        // value 어트리뷰트 값을 취득
+        const inputValue = $input.getAttribute('value');
+        console.log(inputValue); // ungmo2
+    
+        // value 어트리뷰트 값을 변경
+        $input.setAttribute('value', 'foo');
+        console.log($input.getAttribute('value')); // foo
+      </script>
+    </body>
+    </html>
+    ```
+    
+- 특정 HTML 어트리뷰트가 존재하는지 확인 → `Element.prototype.hasAttribute(attributeName)` 메서드 사용
+- 특정 HTML 어트리뷰트 삭제 → `Element.prototype.removeAttribute(attributeName)` 메서드 사용
+    
+    ```html
+    <!DOCTYPE html>
+    <html>
+    <body>
+      <input id="user" type="text" value="ungmo2">
+      <script>
+        const $input = document.getElementById('user');
+    
+        // value 어트리뷰트의 존재 확인
+        if ($input.hasAttribute('value')) {
+          // value 어트리뷰트 삭제
+          $input.removeAttribute('value');
+        }
+    
+        // value 어트리뷰트가 삭제되었다.
+        console.log($input.hasAttribute('value')); // false
+      </script>
+    </body>
+    </html>
+    ```
+    
+
+## 3. HTML 어트리뷰트 vs DOM 프로퍼티
+
+- DOM 프로퍼티 → HTML 어트리뷰트 값을 초기값으로 보유
+    - `setter` 와 `getter` 모두 존재하는 접근자 프로퍼티 → 참조와 변경 가능
+    
+    ```html
+    <!DOCTYPE html>
+    <html>
+    <body>
+      <input id="user" type="text" value="ungmo2">
+      <script>
+        const $input = document.getElementById('user');
+    
+        // 요소 노드의 value 프로퍼티 값을 변경
+        $input.value = 'foo';
+    
+        // 요소 노드의 value 프로퍼티 값을 참조
+        console.log($input.value); // foo
+      </script>
+    </body>
+    </html>
+    ```
+    
+- 요소 노드의 `attributes` 프로퍼티에서 관리하는 어트리뷰트 노드
+- HTML 어트리뷰트에 대응하는 요소 노드의 프로퍼티(DOM 프로퍼티)
+- HTML 어트리뷰트 : HTML 요소의 초기 상태 지정
+- HTML 어트리뷰트 값은 HTML 요소의 초기 상태 의미, 불변
+    
+    ```html
+    <!DOCTYPE html>
+    <html>
+    <body>
+      <input id="user" type="text" value="ungmo2">
+      <script>
+        const $input = document.getElementById('user');
+    
+        // attributes 프로퍼티에 저장된 value 어트리뷰트 값
+        console.log($input.getAttribute('value')); // ungmo2
+    
+        // 요소 노드의 value 프로퍼티에 저장된 value 어트리뷰트 값
+        console.log($input.value); // ungmo2
+      </script>
+    </body>
+    </html>
+    ```
+    
+- 요소 노드 : 상태 보유
+- 요소 노드 → 2개의 상태(초기 상태, 최신 상태) 관리
+    - 초기 상태 : 어트리뷰트 노드가 관리
+    - 최신 상태 : DOM 프로퍼티가 관리
+
+### 1. 어트리뷰트 노드
+
+- HTML 어트리뷰트로 지정한 HTML 요소의 초기 상태는 어트리뷰트 노드에서 관리
+- 어트리뷰트 노드가 관리하는 초기 상태 값을 취득하거나 변경 → `getAttribute/setAttribute` 메서드 사용
+    
+    ```jsx
+    // attributes 프로퍼티에 저장된 value 어트리뷰트 값을 취득한다. 결과는 언제나 동일하다.
+    document.getElementById('user').getAttribute('value'); // ungmo2
+    ```
+    
+    ```html
+    <!DOCTYPE html>
+    <html>
+    <body>
+      <input id="user" type="text" value="ungmo2">
+      <script>
+        // HTML 요소에 지정한 어트리뷰트 값, 즉 초기 상태 값을 변경한다.
+        document.getElementById('user').setAttribute('value', 'foo');
+      </script>
+    </body>
+    </html>
+    ```
+    
+
+### 2. DOM 프로퍼티
+
+- 사용자가 입력한 최신 상태 → HTML 어트리뷰트에 대응하는 요소 노드의 DOM 프로퍼티가 관리
+- DOM 프로퍼티 : 사용자의 입력에 의한 상태 변화에 반응, 언제나 최신 상태 유지
+    
+    ```html
+    <!DOCTYPE html>
+    <html>
+    <body>
+      <input id="user" type="text" value="ungmo2">
+      <script>
+        const $input = document.getElementById('user');
+    
+        // 사용자가 input 요소의 입력 필드에 값을 입력할 때마다 input 요소 노드의
+        // value 프로퍼티 값, 즉 최신 상태 값을 취득한다. value 프로퍼티 값은 사용자의 입력에
+        // 의해 동적으로 변경된다.
+        $input.oninput = () => {
+          console.log('value 프로퍼티 값', $input.value);
+        };
+    
+        // getAttribute 메서드로 취득한 HTML 어트리뷰트 값, 즉 초기 상태 값은 변하지 않고 유지된다.
+        console.log('value 어트리뷰트 값', $input.getAttribute('value'));
+      </script>
+    </body>
+    </html>
+    ```
+    
+    ```html
+    <!DOCTYPE html>
+    <html>
+    <body>
+      <input id="user" type="text" value="ungmo2">
+      <script>
+        const $input = document.getElementById('user');
+    
+        // DOM 프로퍼티에 값을 할당하여 HTML 요소의 최신 상태를 변경한다.
+        $input.value = 'foo';
+        console.log($input.value); // foo
+    
+        // getAttribute 메서드로 취득한 HTML 어트리뷰트 값, 즉 초기 상태 값은 변하지 않고 유지된다.
+        console.log($input.getAttribute('value')); // ungmo2
+      </script>
+    </body>
+    </html>
+    ```
+    
+    ```html
+    <!DOCTYPE html>
+    <html>
+    <body>
+      <input id="user" type="text" value="ungmo2">
+      <script>
+        const $input = document.getElementById('user');
+    
+        // id 어트리뷰트와 id 프로퍼티는 사용자 입력과 관계없이 항상 동일한 값으로 연동한다.
+        $input.id = 'foo';
+    
+        console.log($input.id); // foo
+        console.log($input.getAttribute('id')); // foo
+      </script>
+    </body>
+    </html>
+    ```
+    
+- 사용자 입력에 의한 상태 변화와 관계있는 DOM 프로퍼티만 최신 상태 값 관리
+
+### 3. HTML 어트리뷰트와 DOM 프로퍼티의 대응 관계
+
+- `id` 어트리뷰트와 `id` 프로퍼티는 1:1 대응, 동일한 값으로 연동
+- `input` 요소의 `value` 어트리뷰트는 `value` 프로퍼티와 1:1 대응, `value` 어트리뷰는 초기 상태, `value` 프로퍼티는 최신 상태 보유
+- `class` 어트리뷰트는 `className, classList` 프로퍼티와 대응
+- `for` 어트리뷰트는 `htmlFor` 프로퍼티와 1:1 대응
+- `td` 요소의 `colspan` 어트리뷰트는 대응하는 프로퍼티 존재하지 않음
+- `textContent` 프로퍼티는 대응하는 어트리뷰트가 존재하지 않음
+- 어트리뷰트 이름은 대소문자를 구별하지 않지만 대응하는 프로퍼티 키는 카멜 케이스를 따름
+
+### 4. DOM 프로퍼티 값의 타입
+
+- DOM 프로퍼티로 취득한 최신 상태 값은 문자열이 아닐 수도 있음
+    
+    ```html
+    <!DOCTYPE html>
+    <html>
+    <body>
+      <input type="checkbox" checked>
+      <script>
+        const $checkbox = document.querySelector('input[type=checkbox]');
+    
+        // getAttribute 메서드로 취득한 어트리뷰트 값은 언제나 문자열이다.
+        console.log($checkbox.getAttribute('checked')); // ''
+    
+        // DOM 프로퍼티로 취득한 최신 상태 값은 문자열이 아닐 수도 있다.
+        console.log($checkbox.checked); // true
+      </script>
+    </body>
+    </html>
+    ```
+    
+
+## 4. `data` 어트리뷰트와 `dataset` 프로퍼티
+
+- `data` 어트리뷰트와 `dataset` 프로퍼티 사용 → HTML 요소에 정의한 사용자 정의 어트리뷰트와 자바스크립트 간에 데이터 교환 가능
+    
+    ```html
+    <!DOCTYPE html>
+    <html>
+    <body>
+      <ul class="users">
+        <li id="1" data-user-id="7621" data-role="admin">Lee</li>
+        <li id="2" data-user-id="9524" data-role="subscriber">Kim</li>
+      </ul>
+    </body>
+    </html>
+    ```
+    
+- `data` 어트리뷰트 값 : `HTMLElement.dataset` 프로퍼티로 취득 가능
+- `dataset` 프로퍼티 : HTML 요소의 모든 `data` 어트리뷰트의 정보를 제공하는 `DOMStringMap` 객체 반환
+    
+    ```html
+    <!DOCTYPE html>
+    <html>
+    <body>
+      <ul class="users">
+        <li id="1" data-user-id="7621" data-role="admin">Lee</li>
+        <li id="2" data-user-id="9524" data-role="subscriber">Kim</li>
+      </ul>
+      <script>
+        const users = [...document.querySelector('.users').children];
+    
+        // user-id가 '7621'인 요소 노드를 취득한다.
+        const user = users.find(user => user.dataset.userId === '7621');
+        // user-id가 '7621'인 요소 노드에서 data-role의 값을 취득한다.
+        console.log(user.dataset.role); // "admin"
+    
+        // user-id가 '7621'인 요소 노드의 data-role 값을 변경한다.
+        user.dataset.role = 'subscriber';
+        // dataset 프로퍼티는 DOMStringMap 객체를 반환한다.
+        console.log(user.dataset); // DOMStringMap {userId: "7621", role: "subscriber"}
+      </script>
+    </body>
+    </html>
+    ```
+    
+- `data` 어트리뷰트의 `data-` 접두사 다음에 존재하지 않는 이름을 키로 사용하여 `dataset` 프로퍼티에 값을 할당하면 HTML 요소에 `data` 어트리뷰트 추가
+    
+    ```html
+    <!DOCTYPE html>
+    <html>
+    <body>
+      <ul class="users">
+        <li id="1" data-user-id="7621">Lee</li>
+        <li id="2" data-user-id="9524">Kim</li>
+      </ul>
+      <script>
+        const users = [...document.querySelector('.users').children];
+    
+        // user-id가 '7621'인 요소 노드를 취득한다.
+        const user = users.find(user => user.dataset.userId === '7621');
+    
+        // user-id가 '7621'인 요소 노드에 새로운 data 어트리뷰트를 추가한다.
+        user.dataset.role = 'admin';
+        console.log(user.dataset);
+        /*
+        DOMStringMap {userId: "7621", role: "admin"}
+        -> <li id="1" data-user-id="7621" data-role="admin">Lee</li>
+        */
+      </script>
+    </body>
+    </html>
+    ```
+    
+
+# 8. 스타일
+
+## 1. 인라인 스타일 조작
+
+- `HTMLElement.prototype.style` 프로퍼티 : `setter` 와 `getter` 모두 존재하는 접근자 프로퍼티, 요소 노드의 인라인 스타일을 취득하거나 추가 또는 변경
+    
+    ```html
+    <!DOCTYPE html>
+    <html>
+    <body>
+      <div style="color: red">Hello World</div>
+      <script>
+        const $div = document.querySelector('div');
+    
+        // 인라인 스타일 취득
+        console.log($div.style); // CSSStyleDeclaration { 0: "color", ... }
+    
+        // 인라인 스타일 변경
+        $div.style.color = 'blue';
+    
+        // 인라인 스타일 추가
+        $div.style.width = '100px';
+        $div.style.height = '100px';
+        $div.style.backgroundColor = 'yellow';
+      </script>
+    </body>
+    </html>
+    ```
+    
+- `style` 프로퍼티 참조 → `CSSStyleDeclaration` 타입의 객체 반환
+- CSS 프로퍼티 → 케밥 케이스 따름
+- `CSSStyleDeclaration` 객체의 프로퍼티 → 카멜 케이스 따름
+    
+    ```jsx
+    $div.style.backgroundColor = 'yellow';
+    ```
+    
+- 케밥 케이스의 CSS 프로퍼티를 그대로 사용 → 객체의 마침표 표기법 대신 대괄호 표기법 사용
+    
+    ```jsx
+    $div.style['background-color'] = 'yellow';
+    ```
+    
+- 단위 지정이 필요한 CSS 프로퍼티 값 → 반드시 단위 지정
+    
+    ```jsx
+    $div.style.width = '100px';
+    ```
+    
+
+## 8. 클래스 조작
+
+- `.` 으로 시작하는 클래스 선택자를 사용하여 CSS class를 미리 정의, HTML 요소의 `class` 어트리뷰트 값을 변경하여 HTML 요소의 스타일 변경 가능
+
+### 1. `className`
+
+- `Element.prototype.className` 프로퍼티 : `setter` 와 `getter` 모두 존재하는 접근자 프로퍼티, HTML 요소의 `class` 어트리뷰트 값을 취득하거나 변경
+- 요소 노드의 `className` 프로퍼티 참조 → `class` 어트리뷰트 값을 문자열로 반환
+- 요소 노드의 `className` 프로퍼티에 문자열 할당 → `class` 어트리뷰트 값을 할당한 문자열로 변경
+    
+    ```html
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        .box {
+          width: 100px; height: 100px;
+          background-color: antiquewhite;
+        }
+        .red { color: red; }
+        .blue { color: blue; }
+      </style>
+    </head>
+    <body>
+      <div class="box red">Hello World</div>
+      <script>
+        const $box = document.querySelector('.box');
+    
+        // .box 요소의 class 어트리뷰트 값을 취득
+        console.log($box.className); // 'box red'
+    
+        // .box 요소의 class 어트리뷰트 값 중에서 'red'만 'blue'로 변경
+        $box.className = $box.className.replace('red', 'blue');
+      </script>
+    </body>
+    </html>
+    ```
+    
+
+### 2. `classList`
+
+- `Element.prototype.classList` 프로퍼티 : `class` 어트리뷰트의 정보를 담은 `DOMTokenList` 객체 반환
+    
+    ```html
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        .box {
+          width: 100px; height: 100px;
+          background-color: antiquewhite;
+        }
+        .red { color: red; }
+        .blue { color: blue; }
+      </style>
+    </head>
+    <body>
+      <div class="box red">Hello World</div>
+      <script>
+        const $box = document.querySelector('.box');
+    
+        // .box 요소의 class 어트리뷰트 정보를 담은 DOMTokenList 객체를 취득
+        // classList가 반환하는 DOMTokenList 객체는 HTMLCollection과 NodeList와 같이
+        // 노드 객체의 상태 변화를 실시간으로 반영하는 살아 있는(live) 객체다.
+        console.log($box.classList);
+        // DOMTokenList(2) [length: 2, value: "box blue", 0: "box", 1: "blue"]
+    
+        // .box 요소의 class 어트리뷰트 값 중에서 'red'만 'blue'로 변경
+        $box.classList.replace('red', 'blue');
+      </script>
+    </body>
+    </html>
+    ```
+    
+- `class` 어트리뷰트의 정보를 나타내는 컬렉션 객체로서 유사 배열 객체이면서 이터러블
+    - `add(...className)` : 인수로 전달한 1개 이상의 문자열을 `class` 어트리뷰트 값으로 추가
+        
+        ```jsx
+        $box.classList.add('foo'); // -> class="box red foo"
+        $box.classList.add('bar', 'baz'); // -> class="box red foo bar baz"
+        ```
+        
+    - `remove(...className)` : 인수로 전달한 1개 이상의 문자열과 일치하는 클래스를 `class` 어트리뷰트에서 삭제
+        
+        ```jsx
+        $box.classList.remove('foo'); // -> class="box red bar baz"
+        $box.classList.remove('bar', 'baz'); // -> class="box red"
+        $box.classList.remove('x'); // -> class="box red"
+        ```
+        
+    - `item(index)` : 인수로 전달한 `index` 에 해당하는 클래스를 `class` 어트리뷰트에서 반환
+        
+        ```jsx
+        $box.classList.item(0); // -> "box"
+        $box.classList.item(1); // -> "red"
+        ```
+        
+    - `contains(className)` : 인수로 전달한 문자열과 일치하는 클래스가 `class` 어트리뷰트에 포함되어 있는지 확인
+        
+        ```jsx
+        $box.classList.contains('box');  // -> true
+        $box.classList.contains('blue'); // -> false
+        ```
+        
+    - `replace(oldClassName, newClassName)` : `class` 어트리뷰트에서 첫 번째 인수로 전달한 문자열을 두 번째 인수로 전달한 문자열로 변경
+        
+        ```jsx
+        $box.classList.replace('red', 'blue'); // -> class="box blue"
+        ```
+        
+    - `toggle(className[, force])` : `class` 어트리뷰트에 첫 번째 인수로 전달한 문자열과 일치하는 클래스가 존재하면 제거, 존재하지 않으면 추가
+        
+        ```jsx
+        $box.classList.toggle('foo'); // -> class="box blue foo"
+        $box.classList.toggle('foo'); // -> class="box blue"
+        ```
+        
+        - 두 번째 인수로 불리언 값으로 평가되는 조건식 전달 가능
+            
+            ```jsx
+            // class 어트리뷰트에 강제로 'foo' 클래스를 추가
+            $box.classList.toggle('foo', true); // -> class="box blue foo"
+            // class 어트리뷰트에서 강제로 'foo' 클래스를 제거
+            $box.classList.toggle('foo', false); // -> class="box blue"
+            ```
+            
+
+## 3. 요소에 적용되어 있는 CSS 스타일 참조
+
+- HTML 요소에 적용되어 있는 모든 CSS 스타일을 참조해야 할 경우 `getComputedStyle` 메서드 사용
+- 첫 번째 인수로 전달한 요소 노드에 적용되어 있는 평가된 스타일을 `CSSStyleDeclaration` 객체에 담아 반환
+- 평가된 스타일 : 요소 노드에 적용되어 있는 모든 스타일 → 링크 스타일, 임베딩 스타일, 인라인 스타일, 자바스크립트에서 적용한 스타일, 상속된 스타일, 기본 스타일 등 모든 스타일이 조합되어 최종적으로 적용된 스타일
+    
+    ```html
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        body {
+          color: red;
+        }
+        .box {
+          width: 100px;
+          height: 50px;
+          background-color: cornsilk;
+          border: 1px solid black;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="box">Box</div>
+      <script>
+        const $box = document.querySelector('.box');
+    
+        // .box 요소에 적용된 모든 CSS 스타일을 담고 있는 CSSStyleDeclaration 객체를 취득
+        const computedStyle = window.getComputedStyle($box);
+        console.log(computedStyle); // CSSStyleDeclaration
+    
+        // 임베딩 스타일
+        console.log(computedStyle.width); // 100px
+        console.log(computedStyle.height); // 50px
+        console.log(computedStyle.backgroundColor); // rgb(255, 248, 220)
+        console.log(computedStyle.border); // 1px solid rgb(0, 0, 0)
+    
+        // 상속 스타일(body -> .box)
+        console.log(computedStyle.color); // rgb(255, 0, 0)
+    
+        // 기본 스타일
+        console.log(computedStyle.display); // block
+      </script>
+    </body>
+    </html>
+    ```
+    
+- 두 번째 인수로 `:after` , `:before` 와 같은 의사 요소를 지정하는 문자열 전달 가능
+- 의사 요소가 아닌 일반 요소의 경우 두 번째 인수 생략
+    
+    ```html
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        .box:before {
+          content: 'Hello';
+        }
+      </style>
+    </head>
+    <body>
+      <div class="box">Box</div>
+      <script>
+        const $box = document.querySelector('.box');
+    
+        // 의사 요소 :before의 스타일을 취득한다.
+        const computedStyle = window.getComputedStyle($box, ':before');
+        console.log(computedStyle.content); // "Hello"
+      </script>
+    </body>
+    </html>
+    ```
+    
+
+# 9. DOM 표준
+
+- W3C(World Wide Web Consortium)과 WHATWG(Web Hypertext Application Technology Working Group)이라는 두 단체가 나름대로 협력하면서 공통된 표준 제작
