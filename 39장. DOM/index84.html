@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <ul class="users">
+    <li id="1" data-user-id="7621">Lee</li>
+    <li id="2" data-user-id="9524">Kim</li>
+  </ul>
+  <script>
+    const users = [...document.querySelector('.users').children];
+
+    // user-id가 '7621'인 요소 노드를 취득한다.
+    const user = users.find(user => user.dataset.userId === '7621');
+
+    // user-id가 '7621'인 요소 노드에 새로운 data 어트리뷰트를 추가한다.
+    user.dataset.role = 'admin';
+    console.log(user.dataset);
+    /*
+    DOMStringMap {userId: "7621", role: "admin"}
+    -> <li id="1" data-user-id="7621" data-role="admin">Lee</li>
+    */
+  </script>
+</body>
+</html>

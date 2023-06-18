@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <input id="user" type="text" value="ungmo2">
+  <script>
+    const $input = document.getElementById('user');
+
+    // DOM 프로퍼티에 값을 할당하여 HTML 요소의 최신 상태를 변경한다.
+    $input.value = 'foo';
+    console.log($input.value); // foo
+
+    // getAttribute 메서드로 취득한 HTML 어트리뷰트 값, 즉 초기 상태 값은 변하지 않고 유지된다.
+    console.log($input.getAttribute('value')); // ungmo2
+  </script>
+</body>
+</html>

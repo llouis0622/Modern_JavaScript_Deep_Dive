@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .box:before {
+      content: 'Hello';
+    }
+  </style>
+</head>
+<body>
+  <div class="box">Box</div>
+  <script>
+    const $box = document.querySelector('.box');
+
+    // 의사 요소 :before의 스타일을 취득한다.
+    const computedStyle = window.getComputedStyle($box, ':before');
+    console.log(computedStyle.content); // "Hello"
+  </script>
+</body>
+</html>

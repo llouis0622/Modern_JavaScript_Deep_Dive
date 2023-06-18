@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <input id="user" type="text" value="ungmo2">
+  <script>
+    const $input = document.getElementById('user');
+
+    // id 어트리뷰트와 id 프로퍼티는 사용자 입력과 관계없이 항상 동일한 값으로 연동한다.
+    $input.id = 'foo';
+
+    console.log($input.id); // foo
+    console.log($input.getAttribute('id')); // foo
+  </script>
+</body>
+</html>

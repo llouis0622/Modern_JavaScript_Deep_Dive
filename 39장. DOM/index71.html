@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <input id="user" type="text" value="ungmo2">
+  <script>
+    // 요소 노드의 attribute 프로퍼티는 요소 노드의 모든 어트리뷰트 노드의 참조가 담긴 NamedNodeMap 객체를 반환한다.
+    const { attributes } = document.getElementById('user');
+    console.log(attributes);
+    // NamedNodeMap {0: id, 1: type, 2: value, id: id, type: type, value: value, length: 3}
+
+    // 어트리뷰트 값 취득
+    console.log(attributes.id.value); // user
+    console.log(attributes.type.value); // text
+    console.log(attributes.value.value); // ungmo2
+  </script>
+</body>
+</html>

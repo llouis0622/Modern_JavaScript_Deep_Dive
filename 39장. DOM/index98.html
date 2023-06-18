@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      color: red;
+    }
+    .box {
+      width: 100px;
+      height: 50px;
+      background-color: cornsilk;
+      border: 1px solid black;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">Box</div>
+  <script>
+    const $box = document.querySelector('.box');
+
+    // .box 요소에 적용된 모든 CSS 스타일을 담고 있는 CSSStyleDeclaration 객체를 취득
+    const computedStyle = window.getComputedStyle($box);
+    console.log(computedStyle); // CSSStyleDeclaration
+
+    // 임베딩 스타일
+    console.log(computedStyle.width); // 100px
+    console.log(computedStyle.height); // 50px
+    console.log(computedStyle.backgroundColor); // rgb(255, 248, 220)
+    console.log(computedStyle.border); // 1px solid rgb(0, 0, 0)
+
+    // 상속 스타일(body -> .box)
+    console.log(computedStyle.color); // rgb(255, 0, 0)
+
+    // 기본 스타일
+    console.log(computedStyle.display); // block
+  </script>
+</body>
+</html>

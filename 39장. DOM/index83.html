@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <ul class="users">
+    <li id="1" data-user-id="7621" data-role="admin">Lee</li>
+    <li id="2" data-user-id="9524" data-role="subscriber">Kim</li>
+  </ul>
+  <script>
+    const users = [...document.querySelector('.users').children];
+
+    // user-id가 '7621'인 요소 노드를 취득한다.
+    const user = users.find(user => user.dataset.userId === '7621');
+    // user-id가 '7621'인 요소 노드에서 data-role의 값을 취득한다.
+    console.log(user.dataset.role); // "admin"
+
+    // user-id가 '7621'인 요소 노드의 data-role 값을 변경한다.
+    user.dataset.role = 'subscriber';
+    // dataset 프로퍼티는 DOMStringMap 객체를 반환한다.
+    console.log(user.dataset); // DOMStringMap {userId: "7621", role: "subscriber"}
+  </script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <input id="user" type="text" value="ungmo2">
+  <script>
+    const $input = document.getElementById('user');
+
+    // value 어트리뷰트 값을 취득
+    const inputValue = $input.getAttribute('value');
+    console.log(inputValue); // ungmo2
+
+    // value 어트리뷰트 값을 변경
+    $input.setAttribute('value', 'foo');
+    console.log($input.getAttribute('value')); // foo
+  </script>
+</body>
+</html>
