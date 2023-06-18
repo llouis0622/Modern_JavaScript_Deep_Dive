@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <div id="foo">Hello <span>world!</span></div>
+  </body>
+  <script>
+    // HTML 마크업이 파싱되어 요소 노드의 자식 노드로 DOM에 반영된다.
+    document.getElementById('foo').innerHTML = 'Hi <span>there!</span>';
+  </script>
+</html>

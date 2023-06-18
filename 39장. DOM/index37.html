@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <div id="foo">Hello <span>world!</span></div>
+  </body>
+  <script>
+    // #foo 요소 노드의 텍스트를 모두 취득한다. 이때 HTML 마크업은 무시된다.
+    console.log(document.getElementById('foo').textContent); // Hello world!
+  </script>
+</html>

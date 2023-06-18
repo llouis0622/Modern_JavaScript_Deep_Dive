@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <div id="foo">Hello</div>
+  </body>
+  <script>
+    // 문서 노드의 노드 정보를 취득한다.
+    console.log(document.nodeType); // 9
+    console.log(document.nodeName); // #document
+
+    // 요소 노드의 노드 정보를 취득한다.
+    const $foo = document.getElementById('foo');
+    console.log($foo.nodeType); // 1
+    console.log($foo.nodeName); // DIV
+
+    // 텍스트 노드의 노드 정보를 취득한다.
+    const $textNode = $foo.firstChild;
+    console.log($textNode.nodeType); // 3
+    console.log($textNode.nodeName); // #text
+</script>
+</html>

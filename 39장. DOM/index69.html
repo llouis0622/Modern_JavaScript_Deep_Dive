@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul id="fruits">
+      <li>Apple</li>
+      <li>Banana</li>
+    </ul>
+  </body>
+  <script>
+    const $fruits = document.getElementById('fruits');
+
+    // #fruits 요소 노드의 마지막 요소를 DOM에서 삭제
+    $fruits.removeChild($fruits.lastElementChild);
+  </script>
+</html>

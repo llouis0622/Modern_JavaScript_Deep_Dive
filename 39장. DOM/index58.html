@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul id="fruits"></ul>
+  </body>
+  <script>
+    const $fruits = document.getElementById('fruits');
+
+    ['Apple', 'Banana', 'Orange'].forEach(text => {
+      // 1. 요소 노드 생성
+      const $li = document.createElement('li');
+
+      // 2. 텍스트 노드 생성
+      const textNode = document.createTextNode(text);
+
+      // 3. 텍스트 노드를 $li 요소 노드의 자식 노드로 추가
+      $li.appendChild(textNode);
+
+      // 4. $li 요소 노드를 #fruits 요소 노드의 마지막 자식 노드로 추가
+      $fruits.appendChild($li);
+    });
+  </script>
+</html>

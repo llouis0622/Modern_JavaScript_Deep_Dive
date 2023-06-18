@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <ul id="fruits">
+      <li>Apple</li>
+    </ul>
+  </body>
+  <script>
+    const $fruits = document.getElementById('fruits');
+
+    // 기존 노드와 교체할 요소 노드를 생성
+    const $newChild = document.createElement('li');
+    $newChild.textContent = 'Banana';
+
+    // #fruits 요소 노드의 첫 번째 자식 요소 노드를 $newChild 요소 노드로 교체
+    $fruits.replaceChild($newChild, $fruits.firstElementChild);
+  </script>
+</html>

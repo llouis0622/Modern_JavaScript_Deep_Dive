@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <div id="foo">Hello <span>world!</span></div>
+  </body>
+  <script>
+    // #foo 요소 노드는 텍스트 노드가 아니다.
+    console.log(document.getElementById('foo').nodeValue); // null
+    // #foo 요소 노드의 자식 노드인 텍스트 노드의 값을 취득한다.
+    console.log(document.getElementById('foo').firstChild.nodeValue); // Hello
+    // span 요소 노드의 자식 노드인 텍스트 노드의 값을 취득한다.
+    console.log(document.getElementById('foo').lastChild.firstChild.nodeValue); // world!
+  </script>
+</html>

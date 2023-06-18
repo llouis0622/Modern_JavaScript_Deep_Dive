@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <!-- 요소 노드의 콘텐츠 영역에 다른 요소 노드가 없고 텍스트만 존재 -->
+    <div id="foo">Hello</div>
+  </body>
+  <script>
+    const $foo = document.getElementById('foo');
+
+    // 요소 노드의 콘텐츠 영역에 자식 요소 노드가 없고 텍스트만 존재한다면
+    // firstChild.nodeValue와 textContent는 같은 결과를 반환한다.
+    console.log($foo.textContent === $foo.firstChild.nodeValue); // true
+  </script>
+</html>

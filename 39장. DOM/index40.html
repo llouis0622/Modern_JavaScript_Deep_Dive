@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <div id="foo">Hello <span>world!</span></div>
+  </body>
+  <script>
+    // #foo 요소 노드의 모든 자식 노드가 제거되고 할당한 문자열이 텍스트로 추가된다.
+    // 이때 HTML 마크업이 파싱되지 않는다.
+    document.getElementById('foo').textContent = 'Hi <span>there!</span>';
+  </script>
+</html>
