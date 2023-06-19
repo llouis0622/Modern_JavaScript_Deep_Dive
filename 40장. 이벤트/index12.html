@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <button>Click me!</button>
+  <script>
+    const $button = document.querySelector('button');
+
+    const handleClick = () => console.log('button click');
+
+    // 참조가 동일한 이벤트 핸들러를 중복 등록하면 하나의 핸들러만 등록된다.
+    $button.addEventListener('click', handleClick);
+    $button.addEventListener('click', handleClick);
+  </script>
+</body>
+</html>

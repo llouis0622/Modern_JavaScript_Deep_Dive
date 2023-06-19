@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <button onclick="handleClick(this)">Click me</button>
+  <script>
+    function handleClick(button) {
+      console.log(button); // 이벤트를 바인딩한 button 요소
+      console.log(this);   // window
+    }
+  </script>
+</body>
+</html>
