@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <input type="text">
+  <script>
+    document.querySelector('input').oninput = function () {
+      console.log(this.value);
+      // 이벤트 핸들러에서의 반환은 의미가 없다.
+      return this.value;
+    };
+  </script>
+</body>
+</html>
